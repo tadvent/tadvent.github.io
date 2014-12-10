@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>輝夜の永遠亭 - misc</title>
+        <link rel="stylesheet" href="http://tadvent.github.io/theme/css/main.css" />
+        <link href="http://tadvent.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="輝夜の永遠亭 Atom Feed" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="http://tadvent.github.io/">輝夜の永遠亭  <strong>Lunatic Princess</strong></a></h1>
+                <nav><ul>
+                    <li><a href="http://tadvent.github.io/pages/about/">About</a></li>
+                    <li><a href="http://tadvent.github.io/category/c/">C++</a></li>
+                    <li class="active"><a href="http://tadvent.github.io/category/misc/">misc</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="http://tadvent.github.io/posts/2014/hello-pelican/">Hello Pelican ~</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2014-12-02T22:15:00+08:00">
+                Published: 2014-12-02 (Tue)
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="http://tadvent.github.io/author/">tadvent(輝夜)</a>
+        </address>
+<p>In <a href="http://tadvent.github.io/category/misc/">misc</a>. </p>
+<p>tags: <a href="http://tadvent.github.io/tag/blog/">blog</a> <a href="http://tadvent.github.io/tag/pelican/">pelican</a> <a href="http://tadvent.github.io/tag/jekyll/">jekyll</a> </p>
+</footer><!-- /.post-info --><p>这是使用 pelican 发布的第一篇文章。</p>
+<p>其实从很早就开始写 Blog 了，主要是在微软的 Live Space 上（最开始貌似叫做 MSN Space 之类），可惜由于微软一向的坑队友传统，09 年迫不得已全面迁移至 wordpress.com，但是 wordpress 的风格总觉得不习惯，从 Live Space 迁来的文章在兼容性上似乎也有问题，以前一同交流 blog 的小伙伴也失踪了不少，于是就停了很久一段。其间在其他国内 blog 系统上也尝试过继续，可惜由于各种原因（主要是懒啦 = =）都没有写多少。今年夏季开始在 Github 上码代码，后来闲逛时偶然发现这上居然还有个可以发布页面的系统，于是又有了写点什么的想法。好吧，全部页面都在自己掌控下的感觉还是不错的，再也不怕丢失文章了。</p>
+<p>由于 Github Pages 的推荐，之前尝试过 Jekyll 和 jekyll-bootstrap，但感觉都不太顺手。Jekyll 有很高的灵活性，但是感觉内容和页面主题还是没有完全分开，如果想尝试几种不同风格的主题可能需要改动很多。此外，评论、分页等一些常用功能还需自己添加，较为繁琐 (我确实对前端 html css javascript 这套不是很熟)。jekyll-bootstrap 在这个方向做了不错的尝试，将不同风格主题分别置于不同 theme 目录下，并提供了 disqus、google analytics 等功能，可惜作者似乎已不再维护，转去开发了新的静态页面生成系统，项目开发似乎也不是很活跃。</p>
+<p>后来尝试寻找其他的静态页面生成系统，发现了评价很高的 Hexo 和 Pelican，前者基于 Node.js 开发，后者是 Python。两者似乎都很活跃，用的人也不少，由于 python 的缘故果断选择了 pelican，万一有点想法还可以尝试研究一下代码。</p>
+<p>总之先把大框架搭起来，以后再慢慢完善了，还要把以前的文章迁移过来，貌似工程量还不小...</p>
+<p>代码试验：</p>
+<div class="highlight"><pre><span class="cp">#include&lt;iostream&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello Pelican ~ &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>公式试验：
+<div class="math">$$\int_0^{2\pi}\underbrace{\overbrace{\cosh^2x-\sinh^2x}^{=1}-\cos^2x}_{=\sin^2 x}dx=\pi$$</div>
+</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script><p>There are <a href="http://tadvent.github.io/posts/2014/hello-pelican/#disqus_thread">comments</a>.</p>                </article>
+<p class="paginator">
+    Page 1 / 1
+</p>
+            </aside><!-- /#featured -->
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="http://dantvt.is-programmer.com/">NEET 研究</a></li>
+                            <li><a href="http://tadvent.wordpress.com">黑歷史</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+                            <li><a href="http://tadvent.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+
+                            <li><a href="https://github.com/tadvent">Github</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-57332699-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+<script type="text/javascript">
+    var disqus_shortname = 'tadvent-github';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>
