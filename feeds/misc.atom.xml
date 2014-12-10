@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>輝夜の永遠亭</title><link href="http://tadvent.github.io/" rel="alternate"></link><link href="http://tadvent.github.io/feeds/misc.atom.xml" rel="self"></link><id>http://tadvent.github.io/</id><updated>2014-12-02T22:15:00+08:00</updated><entry><title>Hello Pelican ~</title><link href="http://tadvent.github.io/posts/2014/hello-pelican/" rel="alternate"></link><updated>2014-12-02T22:15:00+08:00</updated><author><name>tadvent(輝夜)</name></author><id>tag:tadvent.github.io,2014-12-02:posts/2014/hello-pelican/</id><summary type="html">&lt;p&gt;这是使用 pelican 发布的第一篇文章。&lt;/p&gt;
+&lt;p&gt;其实从很早就开始写 Blog 了，主要是在微软的 Live Space 上（最开始貌似叫做 MSN Space 之类），可惜由于微软一向的坑队友传统，09 年迫不得已全面迁移至 wordpress.com，但是 wordpress 的风格总觉得不习惯，从 Live Space 迁来的文章在兼容性上似乎也有问题，以前一同交流 blog 的小伙伴也失踪了不少，于是就停了很久一段。其间在其他国内 blog 系统上也尝试过继续，可惜由于各种原因（主要是懒啦 = =）都没有写多少。今年夏季开始在 Github 上码代码，后来闲逛时偶然发现这上居然还有个可以发布页面的系统，于是又有了写点什么的想法。好吧，全部页面都在自己掌控下的感觉还是不错的，再也不怕丢失文章了。&lt;/p&gt;
+&lt;p&gt;由于 Github Pages 的推荐，之前尝试过 Jekyll 和 jekyll-bootstrap，但感觉都不太顺手。Jekyll 有很高的灵活性，但是感觉内容和页面主题还是没有完全分开，如果想尝试几种不同风格的主题可能需要改动很多。此外，评论、分页等一些常用功能还需自己添加，较为繁琐 (我确实对前端 html css javascript 这套不是很熟)。jekyll-bootstrap 在这个方向做了不错的尝试，将不同风格主题分别置于不同 theme 目录下，并提供了 disqus、google analytics 等功能，可惜作者似乎已不再维护，转去开发了新的静态页面生成系统，项目开发似乎也不是很活跃。&lt;/p&gt;
+&lt;p&gt;后来尝试寻找其他的静态页面生成系统，发现了评价很高的 Hexo 和 Pelican，前者基于 Node.js 开发，后者是 Python。两者似乎都很活跃，用的人也不少，由于 python 的缘故果断选择了 pelican，万一有点想法还可以尝试研究一下代码。&lt;/p&gt;
+&lt;p&gt;总之先把大框架搭起来，以后再慢慢完善了，还要把以前的文章迁移过来，貌似工程量还不小...&lt;/p&gt;
+&lt;p&gt;代码试验：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;#include&amp;lt;iostream&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Hello Pelican ~ &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;公式试验：
+&lt;div class="math"&gt;$$\int_0^{2\pi}\underbrace{\overbrace{\cosh^2x-\sinh^2x}^{=1}-\cos^2x}_{=\sin^2 x}dx=\pi$$&lt;/div&gt;
+&lt;/p&gt;
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</summary><category term="blog"></category><category term="pelican"></category><category term="jekyll"></category></entry></feed>
