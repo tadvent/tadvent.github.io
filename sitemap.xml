@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://tadvent.github.io/index.html</loc>
-<lastmod>2014-12-10T21:48:09-00:00</lastmod>
+<lastmod>2014-12-12T16:08:14-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://tadvent.github.io/archives.html</loc>
-<lastmod>2014-12-10T21:48:09-00:00</lastmod>
+<lastmod>2014-12-12T16:08:14-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://tadvent.github.io/tags.html</loc>
-<lastmod>2014-12-10T21:48:09-00:00</lastmod>
+<lastmod>2014-12-12T16:08:14-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://tadvent.github.io/categories.html</loc>
-<lastmod>2014-12-10T21:48:09-00:00</lastmod>
+<lastmod>2014-12-12T16:08:14-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -36,6 +36,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <lastmod>2014-12-04T22:30:00+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.3</priority>
+</url>
+
+<url>
+<loc>http://tadvent.github.io/posts/2014/scope-exit-guard/</loc>
+<lastmod>2014-12-12T14:25:00+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
 </url>
 
 <url>
@@ -54,7 +61,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://tadvent.github.io/category/c/</loc>
-<lastmod>2014-12-10T17:45:00+08:06</lastmod>
+<lastmod>2014-12-12T14:25:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -82,7 +89,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://tadvent.github.io/tag/c/</loc>
-<lastmod>2014-12-10T17:45:00+08:06</lastmod>
+<lastmod>2014-12-12T14:25:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -96,7 +103,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://tadvent.github.io/author/</loc>
-<lastmod>2014-12-10T17:45:00+08:06</lastmod>
+<lastmod>2014-12-12T14:25:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

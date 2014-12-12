@@ -1,5 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>輝夜の永遠亭</title><link href="http://tadvent.github.io/" rel="alternate"></link><link href="http://tadvent.github.io/feeds/c.atom.xml" rel="self"></link><id>http://tadvent.github.io/</id><updated>2014-12-10T17:45:00+08:00</updated><entry><title>指针和虚函数表</title><link href="http://tadvent.github.io/posts/2014/pointer-vptr/" rel="alternate"></link><updated>2014-12-10T17:45:00+08:00</updated><author><name>tadvent(輝夜)</name></author><id>tag:tadvent.github.io,2014-12-10:posts/2014/pointer-vptr/</id><summary type="html">&lt;p&gt;前两天在水木 C++ 版看到两个题目，分别是关于指针和 class 的虚函数表的。关于指针和数组，之前已经打过很久的交道了，比较简单。不过虚函数表以及 class 成员的内存布局一直是模模糊糊的概念，趁此机会把《C++对象模型》拿出来研究了一把。&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>輝夜の永遠亭</title><link href="http://tadvent.github.io/" rel="alternate"></link><link href="http://tadvent.github.io/feeds/c.atom.xml" rel="self"></link><id>http://tadvent.github.io/</id><updated>2014-12-12T14:25:00+08:00</updated><entry><title>C++ 的 ScopeExitGuard</title><link href="http://tadvent.github.io/posts/2014/scope-exit-guard/" rel="alternate"></link><updated>2014-12-12T14:25:00+08:00</updated><author><name>tadvent(輝夜)</name></author><id>tag:tadvent.github.io,2014-12-12:posts/2014/scope-exit-guard/</id><summary type="html">&lt;p&gt;C++ 提供了 RAII 机制，并提倡使用它来管理各种资源，可是在实际中会发现这一套使用起来并不如想象中的那么方便。在 Linux 下开发会遇到大量 open() / close() 或是 malloc() / free() 类似操作，而且大部分都没有现成好用的 C++ wrapper，如果每组操作都自己去寨一个 class OperationGuard 只用来管理资源释放未免又显得过于繁琐。&lt;/p&gt;
+&lt;p&gt;其实我需要的只是在退出作用域时自动执行一些清理操作，如果能方便的把要进行的操作封装在一个临时对象的析构函数里就好了。在网上搜索了一下，果然已经有很多人想到了这个问题，现成的实现有 Boost 的 SCOPE_EXIT，看了一下支持的功能很多，用起来也比想象中复杂了不少。于是还是自己来寨一个好了，也不用很复杂：（以下实现参考了&lt;a href="http://the-witness.net/news/2012/11/scopeexit-in-c11/"&gt;SCOPE(EXIT) IN C++11&lt;/a&gt;）&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;template&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;F&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ScopeExitGuard_Impl&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;F&lt;/span&gt; &lt;span class="n"&gt;_f&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;public&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;ScopeExitGuard_Impl&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;F&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;_f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
+    &lt;span class="o"&gt;~&lt;/span&gt;&lt;span class="n"&gt;ScopeExitGuard_Impl&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+        &lt;span class="n"&gt;_f&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;span class="k"&gt;template&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;F&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="n"&gt;ScopeExitGuard_Impl&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;F&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ScopeExitGuard&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;F&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;ScopeExitGuard_Impl&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;F&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="cp"&gt;#define SCOPE_EXIT_GUARD(code) \&lt;/span&gt;
+&lt;span class="cp"&gt;    auto scope_exit_##__LINE__ = ScopeExitGuard([&amp;amp;]{code;})&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;C++11 的 lambda 真是好用啊。在 &lt;a href="http://the-witness.net/news/2012/11/scopeexit-in-c11/"&gt;SCOPE(EXIT) IN C++11&lt;/a&gt; 那篇中，lambda 使用了 [=] 来获取外部变量，这样一来就只能读取，无法改写。我在上面的 lambda 中改为 [&amp;amp;] 方便改写外部变量。&lt;/p&gt;
+&lt;p&gt;使用起来很简单：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;SCOPE_EXIT_GUARD&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// print: 2&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="k"&gt;operator&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+    &lt;span class="c1"&gt;// label 1&lt;/span&gt;
+    &lt;span class="n"&gt;SCOPE_EXIT_GUARD&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="k"&gt;operator&lt;/span&gt; &lt;span class="k"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+        &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如果在 ::operator new() 语句或 label 1 处抛出异常，::operator delete() 就不会被调用，因此只需把释放资源的 SCOPE_EXIT_GURAD 语句与申请资源的语句放在一起就好。&lt;/p&gt;</summary><category term="C++"></category></entry><entry><title>指针和虚函数表</title><link href="http://tadvent.github.io/posts/2014/pointer-vptr/" rel="alternate"></link><updated>2014-12-10T17:45:00+08:00</updated><author><name>tadvent(輝夜)</name></author><id>tag:tadvent.github.io,2014-12-10:posts/2014/pointer-vptr/</id><summary type="html">&lt;p&gt;前两天在水木 C++ 版看到两个题目，分别是关于指针和 class 的虚函数表的。关于指针和数组，之前已经打过很久的交道了，比较简单。不过虚函数表以及 class 成员的内存布局一直是模模糊糊的概念，趁此机会把《C++对象模型》拿出来研究了一把。&lt;/p&gt;
 &lt;h2&gt;题目一&lt;/h2&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;#include&amp;lt;stdio.h&amp;gt;  &lt;/span&gt;
 &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;  

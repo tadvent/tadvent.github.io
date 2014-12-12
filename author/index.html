@@ -23,7 +23,71 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="http://tadvent.github.io/posts/2014/pointer-vptr/">指针和虚函数表</a></h1>
+                    <h1 class="entry-title"><a href="http://tadvent.github.io/posts/2014/scope-exit-guard/">C++ 的 ScopeExitGuard</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2014-12-12T14:25:00+08:00">
+                Published: 2014-12-12 (Fri)
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="http://tadvent.github.io/author/">tadvent(輝夜)</a>
+        </address>
+<p>In <a href="http://tadvent.github.io/category/c/">C++</a>. </p>
+<p>tags: <a href="http://tadvent.github.io/tag/c/">C++</a> </p>
+</footer><!-- /.post-info --><p>C++ 提供了 RAII 机制，并提倡使用它来管理各种资源，可是在实际中会发现这一套使用起来并不如想象中的那么方便。在 Linux 下开发会遇到大量 open() / close() 或是 malloc() / free() 类似操作，而且大部分都没有现成好用的 C++ wrapper，如果每组操作都自己去寨一个 class OperationGuard 只用来管理资源释放未免又显得过于繁琐。</p>
+<p>其实我需要的只是在退出作用域时自动执行一些清理操作，如果能方便的把要进行的操作封装在一个临时对象的析构函数里就好了。在网上搜索了一下，果然已经有很多人想到了这个问题，现成的实现有 Boost 的 SCOPE_EXIT，看了一下支持的功能很多，用起来也比想象中复杂了不少。于是还是自己来寨一个好了，也不用很复杂：（以下实现参考了<a href="http://the-witness.net/news/2012/11/scopeexit-in-c11/">SCOPE(EXIT) IN C++11</a>）</p>
+<div class="highlight"><pre><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">ScopeExitGuard_Impl</span><span class="p">{</span>
+    <span class="n">F</span> <span class="n">_f</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">ScopeExitGuard_Impl</span><span class="p">(</span><span class="n">F</span> <span class="n">f</span><span class="p">)</span> <span class="o">:</span> <span class="n">_f</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="o">~</span><span class="n">ScopeExitGuard_Impl</span><span class="p">(){</span>
+        <span class="n">_f</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="n">ScopeExitGuard_Impl</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span> <span class="n">ScopeExitGuard</span><span class="p">(</span><span class="n">F</span> <span class="n">f</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">ScopeExitGuard_Impl</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cp">#define SCOPE_EXIT_GUARD(code) \</span>
+<span class="cp">    auto scope_exit_##__LINE__ = ScopeExitGuard([&amp;]{code;})</span>
+</pre></div>
+
+
+<p>C++11 的 lambda 真是好用啊。在 <a href="http://the-witness.net/news/2012/11/scopeexit-in-c11/">SCOPE(EXIT) IN C++11</a> 那篇中，lambda 使用了 [=] 来获取外部变量，这样一来就只能读取，无法改写。我在上面的 lambda 中改为 [&amp;] 方便改写外部变量。</p>
+<p>使用起来很简单：</p>
+<div class="highlight"><pre><span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">{</span>
+    <span class="n">SCOPE_EXIT_GUARD</span><span class="p">(</span><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// print: 2</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="o">::</span><span class="k">operator</span> <span class="k">new</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+    <span class="c1">// label 1</span>
+    <span class="n">SCOPE_EXIT_GUARD</span><span class="p">(</span><span class="o">::</span><span class="k">operator</span> <span class="k">delete</span><span class="p">(</span><span class="n">p</span><span class="p">));</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">){</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>如果在 ::operator new() 语句或 label 1 处抛出异常，::operator delete() 就不会被调用，因此只需把释放资源的 SCOPE_EXIT_GURAD 语句与申请资源的语句放在一起就好。</p><p>There are <a href="http://tadvent.github.io/posts/2014/scope-exit-guard/#disqus_thread">comments</a>.</p>                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="http://tadvent.github.io/posts/2014/pointer-vptr/" rel="bookmark"
+                           title="Permalink to 指针和虚函数表">指针和虚函数表</a></h1>
+                </header>
+
+                <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2014-12-10T17:45:00+08:00">
                 Published: 2014-12-10 (Wed)
@@ -34,7 +98,7 @@
         </address>
 <p>In <a href="http://tadvent.github.io/category/c/">C++</a>. </p>
 <p>tags: <a href="http://tadvent.github.io/tag/c/">C++</a> </p>
-</footer><!-- /.post-info --><p>前两天在水木 C++ 版看到两个题目，分别是关于指针和 class 的虚函数表的。关于指针和数组，之前已经打过很久的交道了，比较简单。不过虚函数表以及 class 成员的内存布局一直是模模糊糊的概念，趁此机会把《C++对象模型》拿出来研究了一把。</p>
+</footer><!-- /.post-info -->                <p>前两天在水木 C++ 版看到两个题目，分别是关于指针和 class 的虚函数表的。关于指针和数组，之前已经打过很久的交道了，比较简单。不过虚函数表以及 class 成员的内存布局一直是模模糊糊的概念，趁此机会把《C++对象模型》拿出来研究了一把。</p>
 <h2>题目一</h2>
 <div class="highlight"><pre><span class="cp">#include&lt;stdio.h&gt;  </span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>  
@@ -52,65 +116,10 @@
 <li><code>a</code> 的类型是 <code>int[5]</code>，表示一个长度为 5 的 <code>int</code> 型数组</li>
 <li>由于 <code>a</code> 的类型是数组，因此对 <code>a</code> 进行算数运算时，其所指地址是以 <code>sizeof(A[0])</code> 为单位变化的，这里即是 <code>sizeof(int)</code>，因此 <code>*(a+1)</code> 是 <code>a[1]</code></li>
 <li>对 <code>a</code> 取地址，得到的类型是 <code>int (*)[5]</code>，这是一个指针，其指向一个含有 5 个 <code>int</code> 的数组。因此 <code>&amp;a+1</code> 会使地址向后移动 5 个 <code>int</code> 的空间，得到 <code>a[5]</code> 的地址。</li>
-<li><code>ptr</code> 是 <code>int*</code> 类型，因此它的算数运算的单位是 <code>sizeof(int)</code>，<code>ptr-1</code> 即可得到 <code>a[4]</code> 的地址。</li>
-<li>综上，程序输出 2,5</li>
-</ol>
-<hr />
-<h2>题目二</h2>
-<div class="highlight"><pre><span class="cp">#include &lt;iostream&gt;</span>
-<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">A</span> <span class="p">{</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">g</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;A::g&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="k">private</span><span class="o">:</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">f</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;A::f&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="k">class</span> <span class="nc">B</span> <span class="o">:</span> <span class="k">public</span> <span class="n">A</span> <span class="p">{</span>
-    <span class="kt">void</span> <span class="n">g</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;B::g&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">h</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;B::h&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="k">typedef</span> <span class="nf">void</span><span class="p">(</span><span class="o">*</span><span class="n">Fun</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span>
-
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">B</span> <span class="n">b</span><span class="p">;</span>
-    <span class="n">Fun</span> <span class="n">pFun</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">pFun</span> <span class="o">=</span> <span class="p">(</span><span class="n">Fun</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="o">*</span> <span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
-        <span class="n">pFun</span><span class="p">();</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>程序输出什么？</p>
-<p>看那一串丧心病狂的指针操作！！</p>
-<p>class 层次很简单，A 里有两个虚函数 g() 和 f()，B 里重写了 g()，又添了一个 h()。A 里那个 private 是多余，所有函数都是 private 的。 main() 里主要就是对那个函数指针 pFun 赋值，然后调用。看来所有的内容都在那个指针操作里。</p>
-<ol>
-<li><code>(&amp;b)</code> 得到 <code>b</code> 的地址，类型是 <code>B*</code></li>
-<li><code>*(int*)(&amp;b)</code> 将 <code>b</code> 的地址按 <code>int</code> 型指针来解释，并取出这个 <code>int</code> 值。相当于将 <code>b</code> 的前 4 个字节 (32位环境下) 当成一个 <code>int</code> 型读出。假设读出的值是 <code>vptr</code> （好吧……其实就是 vptr）</li>
-<li><code>*((int*)vptr + i)</code> 将上一个操作取出的值再当成一个地址，并添加 <code>i</code> 个单位偏移。由于是 <code>int*</code> 类型，因此每次偏移一个 <code>sizeof(int)</code> 的空间，即 4 字节。粗略来说就相当于读出 <code>vptr[i]</code> 的值。</li>
-<li>最后再转换为 <code>Fun</code> 的函数指针。</li>
-</ol>
-<p>用一个图来看一下：
-<img alt="vptr" src="http://tadvent.github.io/posts/2014-12-10-vptr.png" title="vptr 的指针操作" /></p>
-<p>class A 里有两个虚函数，因此它的虚函数表只有两项，分别是 A::g() 和 A::f()。class B 继承自 A，因此它必须首先照搬 A 的虚函数表（前 2 项），然后再添加自己新加的 B::h()，同时在 B 中又重写了 g()，因此 B 的虚函数表里把 A::g() 的位置替换为 B::g()。</p>
-<p>根据前面指针的分析可以看出，三次循环分别调用了 B::g(), A::f() 和 B::h()。不过这个调用比较粗暴，完全无视了函数参数。本身类成员函数是带有一个 this 指针做参数的，不过既然这里也没有使用成员变量，因此也就没什么影响了。</p>
-<p>以上程序能够成功运行的条件是 class 的虚函数指针位于对象的头部。我试着在 class A 和 class B 中分别添加一个 int 成员，输出结果依然不变（VS2013 和 gcc4.9.2 下），说明这两个编译器都将虚函数指针放在对象头部，没有再试验其他环境，不知道会不会有不同结果。另外，如果是 64位 环境，应将指针变换那一行的所有 int 换成 int64_t 或 long long，不然指针和 int 所占空间不同，地址运算会出错。</p><p>There are <a href="http://tadvent.github.io/posts/2014/pointer-vptr/#disqus_thread">comments</a>.</p>                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
+<li><code>ptr ...</code></li></ol>
+                <a class="readmore" href="http://tadvent.github.io/posts/2014/pointer-vptr/">read more</a>
+<p>There are <a href="http://tadvent.github.io/posts/2014/pointer-vptr/#disqus_thread">comments</a>.</p>                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
